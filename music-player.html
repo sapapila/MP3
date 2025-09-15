@@ -97,8 +97,20 @@
       ["click","scroll","mousemove","keydown","touchstart"].forEach(evt => {
         window.addEventListener(evt, triggerPlayOnce);
       });
+      
+      // DENGARKAN PESAN DARI PARENT
+      window.addEventListener("message", function (event) {
+        if (event.data && event.data.action === "playMusic") {
+          if (audio.paused) {
+            audio.play().then(() => {
+              vinyl.classList.add("spinning");
+            }).catch(err => console.log("Autoplay blocked:", err));
+          }
+        }
+      });
   </script>
 </body>
 </html>
+
 
 
