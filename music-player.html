@@ -16,7 +16,6 @@
       overflow: hidden;
     }
 
-    /* Vinyl widget */
     .vinyl-widget {
       width: 70px;
       height: 70px;
@@ -29,11 +28,21 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       transition: transform 0.3s ease;
       user-select: none;
-      font-size: 26px;
+      font-size: 28px;
       color: #fff;
+      position: relative;
     }
 
-    /* Animasi spinning */
+    /* Pause icon = ♫ dengan coret */
+    .paused::after {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 2px;
+      background: white;
+      transform: rotate(-20deg);
+    }
+
     .spinning {
       animation: spin 4s linear infinite;
     }
@@ -45,10 +54,8 @@
   </style>
 </head>
 <body>
-  <!-- Widget -->
-  <div class="vinyl-widget" id="vinylToggle">&#9654;</div>
+  <div class="vinyl-widget" id="vinylToggle">&#9835;</div> <!-- ♫ = &#9835; -->
 
-  <!-- Audio -->
   <audio id="bg-music" preload="auto" loop>
     <source src="https://github.com/sapapila/mp3/raw/refs/heads/main/royalty-free-jazz-coastal-melody-363473.mp3" type="audio/mpeg" />
   </audio>
@@ -58,33 +65,29 @@
       const audio = document.getElementById("bg-music");
       const vinyl = document.getElementById("vinylToggle");
 
-      // Set default volume
       audio.volume = 0.4;
 
-      // Toggle play/pause
       function togglePlay() {
         if (audio.paused) {
           audio.play();
           vinyl.classList.add("spinning");
-          vinyl.textContent = "❚❚"; // Pause symbol
+          vinyl.classList.remove("paused");
         } else {
           audio.pause();
           vinyl.classList.remove("spinning");
-          vinyl.textContent = "▶"; // Play symbol
+          vinyl.classList.add("paused");
         }
       }
 
       vinyl.addEventListener("click", togglePlay);
 
-      // === Trigger autoplay via scroll atau klik pertama
+      // Trigger autoplay pertama kali (klik/scroll di halaman apa pun)
       function triggerPlayOnce() {
         if (audio.paused) {
           audio.play().then(() => {
             vinyl.classList.add("spinning");
-            vinyl.textContent = "❚❚";
           }).catch(err => console.log("Autoplay blocked:", err));
         }
-        // Hapus listener supaya cuma sekali trigger
         document.removeEventListener("click", triggerPlayOnce);
         document.removeEventListener("scroll", triggerPlayOnce);
       }
