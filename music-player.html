@@ -1,92 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Music Player</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
       background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
+
+    /* Vinyl widget */
     .vinyl-widget {
-      background: #c14475;
-      color: #fff;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
+      background: #c14475;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      font-size: 28px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
       user-select: none;
+      font-size: 26px;
+      color: #fff;
     }
-    .vinyl-widget.spinning {
+
+    /* Animasi spinning */
+    .spinning {
       animation: spin 4s linear infinite;
     }
+
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    .strikethrough {
-      position: relative;
-    }
-    .strikethrough::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 2px;
-      background: #fff;
-      transform: rotate(-20deg);
-    }
   </style>
 </head>
 <body>
-  <div class="vinyl-widget" id="vinylToggle">&#9835;</div> <!-- ♫ -->
-  
+  <!-- Widget -->
+  <div class="vinyl-widget" id="vinylToggle">&#9654;</div>
+
+  <!-- Audio -->
   <audio id="bg-music" preload="auto" loop>
-    <source src="https://github.com/sapapila/mp3/raw/refs/heads/main/royalty-free-jazz-coastal-melody-363473.mp3" type="audio/mpeg">
+    <source src="https://github.com/sapapila/mp3/raw/refs/heads/main/royalty-free-jazz-coastal-melody-363473.mp3" type="audio/mpeg" />
   </audio>
 
   <script>
-    const audio = document.getElementById("bg-music");
-    const vinyl = document.getElementById("vinylToggle");
+    document.addEventListener("DOMContentLoaded", function () {
+      const audio = document.getElementById("bg-music");
+      const vinyl = document.getElementById("vinylToggle");
 
-    audio.volume = 0.4; // 40%
+      // Set default volume
+      audio.volume = 0.4;
 
-    function togglePlay() {
-      if (audio.paused) {
-        audio.play();
-        vinyl.classList.add("spinning");
-        vinyl.classList.remove("strikethrough");
-      } else {
-        audio.pause();
-        vinyl.classList.remove("spinning");
-        vinyl.classList.add("strikethrough");
+      // Toggle play/pause
+      function togglePlay() {
+        if (audio.paused) {
+          audio.play();
+          vinyl.classList.add("spinning");
+          vinyl.textContent = "❚❚"; // Pause symbol
+        } else {
+          audio.pause();
+          vinyl.classList.remove("spinning");
+          vinyl.textContent = "▶"; // Play symbol
+        }
       }
-    }
 
-    vinyl.addEventListener("click", togglePlay);
+      vinyl.addEventListener("click", togglePlay);
 
-    // Autoplay trigger → aktif saat pertama interaksi
-    function autoPlayTrigger() {
-      if (audio.paused) {
-        audio.play().catch(() => {}); // ignore error
-        vinyl.classList.add("spinning");
+      // === Trigger autoplay via scroll atau klik pertama
+      function triggerPlayOnce() {
+        if (audio.paused) {
+          audio.play().then(() => {
+            vinyl.classList.add("spinning");
+            vinyl.textContent = "❚❚";
+          }).catch(err => console.log("Autoplay blocked:", err));
+        }
+        // Hapus listener supaya cuma sekali trigger
+        document.removeEventListener("click", triggerPlayOnce);
+        document.removeEventListener("scroll", triggerPlayOnce);
       }
-      document.removeEventListener("scroll", autoPlayTrigger);
-      document.removeEventListener("click", autoPlayTrigger);
-      document.removeEventListener("wheel", autoPlayTrigger);
-      document.removeEventListener("touchstart", autoPlayTrigger);
-    }
 
-    document.addEventListener("scroll", autoPlayTrigger, { once: true });
-    document.addEventListener("click", autoPlayTrigger, { once: true });
-    document.addEventListener("wheel", autoPlayTrigger, { once: true });
-    document.addEventListener("touchstart", autoPlayTrigger, { once: true });
+      document.addEventListener("click", triggerPlayOnce);
+      document.addEventListener("scroll", triggerPlayOnce);
+    });
   </script>
 </body>
 </html>
-
