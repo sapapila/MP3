@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Player</title>
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+    }
+    .vinyl-widget {
+      background: #c14475;
+      color: #fff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 28px;
+      user-select: none;
+    }
+    .vinyl-widget.spinning {
+      animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .strikethrough {
+      position: relative;
+    }
+    .strikethrough::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background: #fff;
+      transform: rotate(-20deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="vinyl-widget" id="vinylToggle">&#9835;</div> <!-- ♫ -->
+  
+  <audio id="bg-music" preload="auto" loop>
+    <source src="your-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const audio = document.getElementById("bg-music");
+    const vinyl = document.getElementById("vinylToggle");
+
+    audio.volume = 0.4; // 40%
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        vinyl.classList.add("spinning");
+        vinyl.classList.remove("strikethrough");
+      } else {
+        audio.pause();
+        vinyl.classList.remove("spinning");
+        vinyl.classList.add("strikethrough");
+      }
+    }
+
+    vinyl.addEventListener("click", togglePlay);
+
+    // Autoplay trigger → aktif saat pertama interaksi
+    function autoPlayTrigger() {
+      if (audio.paused) {
+        audio.play().catch(() => {}); // ignore error
+        vinyl.classList.add("spinning");
+      }
+      document.removeEventListener("scroll", autoPlayTrigger);
+      document.removeEventListener("click", autoPlayTrigger);
+      document.removeEventListener("wheel", autoPlayTrigger);
+      document.removeEventListener("touchstart", autoPlayTrigger);
+    }
+
+    document.addEventListener("scroll", autoPlayTrigger, { once: true });
+    document.addEventListener("click", autoPlayTrigger, { once: true });
+    document.addEventListener("wheel", autoPlayTrigger, { once: true });
+    document.addEventListener("touchstart", autoPlayTrigger, { once: true });
+  </script>
+</body>
+</html>
