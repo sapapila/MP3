@@ -96,6 +96,18 @@
       document.addEventListener("scroll", triggerPlayOnce);
     });
   </script>
+  <script>
+  const audio = document.getElementById("bg-music");
+
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: "Coastal Melody",
+      artist: "Onoychenko Music",
+    });
+  }
+</script>
+
 </body>
 </html>
+
 
