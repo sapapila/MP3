@@ -88,14 +88,17 @@
             vinyl.classList.add("spinning");
           }).catch(err => console.log("Autoplay blocked:", err));
         }
-        document.removeEventListener("click", triggerPlayOnce);
-        document.removeEventListener("scroll", triggerPlayOnce);
+        // Hapus semua listener setelah sekali jalan
+        ["click","scroll","mousemove","keydown","touchstart"].forEach(evt => {
+          window.removeEventListener(evt, triggerPlayOnce);
+        });
       }
 
-      document.addEventListener("click", triggerPlayOnce);
-      document.addEventListener("scroll", triggerPlayOnce);
-    });
+      ["click","scroll","mousemove","keydown","touchstart"].forEach(evt => {
+        window.addEventListener(evt, triggerPlayOnce);
+      });
   </script>
 </body>
 </html>
+
 
