@@ -88,29 +88,14 @@
             vinyl.classList.add("spinning");
           }).catch(err => console.log("Autoplay blocked:", err));
         }
-        // Hapus semua listener setelah sekali jalan
-        ["click","scroll","mousemove","keydown","touchstart"].forEach(evt => {
-          window.removeEventListener(evt, triggerPlayOnce);
-        });
+        document.removeEventListener("click", triggerPlayOnce);
+        document.removeEventListener("scroll", triggerPlayOnce);
       }
 
-      ["click","scroll","mousemove","keydown","touchstart"].forEach(evt => {
-        window.addEventListener(evt, triggerPlayOnce);
-      });
-      
-      // DENGARKAN PESAN DARI PARENT
-      window.addEventListener("message", function (event) {
-        if (event.data && event.data.action === "playMusic") {
-          if (audio.paused) {
-            audio.play().then(() => {
-              vinyl.classList.add("spinning");
-            }).catch(err => console.log("Autoplay blocked:", err));
-          }
-        }
-      });
+      document.addEventListener("click", triggerPlayOnce);
+      document.addEventListener("scroll", triggerPlayOnce);
+    });
   </script>
 </body>
 </html>
-
-
 
